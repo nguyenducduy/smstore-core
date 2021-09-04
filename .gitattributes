@@ -1,0 +1,7 @@
+*.vue linguist-detectable=true
+*.css linguist-detectable=false
+*.html linguist-detectable=false
+*.js linguist-detectable=true
+*.ts linguist-detectable=true
+*.py linguist-detectable=true
+docs/* linguist-documentation
