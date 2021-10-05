@@ -29,27 +29,17 @@ services:
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: 'startup, http-log, webhook-log, websocket-log, query-log'
       HASURA_GRAPHQL_ADMIN_SECRET: '1'
       HASURA_GRAPHQL_JWT_SECRET: '{"type":"HS256", "key": "RUJaQoJJcmPmnTKpK@39gp3i21CL6lOudQ"}'
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: guest
+      HASURA_GRAPHQL_CORS_DOMAIN: '*'
       ACTION_BASE_URL: http://localhost:5000
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.1
-    container_name: smstore-es01
-    environment:
-      - node.name=smstore-es01
-      - cluster.name=smstore-es-docker-cluster
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - data01:/usr/share/smstore-elasticsearch/data
+  meilisearch:
+    image: getmeili/meilisearch
+    command: ./meilisearch --master-key=masterKey --no-analytics=true
     ports:
-      - 9200:9200
-    networks:
-      - elastic
+        -   target: 7700
+            published: 7700
+            protocol: tcp
 
 networks:
   hasura:
@@ -58,6 +48,7 @@ networks:
     driver: bridge
   elastic:
     driver: bridge
+
 volumes:
   db_data: null
   pgadmin_data: null

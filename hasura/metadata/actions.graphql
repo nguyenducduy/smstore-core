@@ -1,0 +1,52 @@
+type Mutation {
+  activate (
+    activated_code: String!
+    email: String!
+    screen_name: String
+    name: String
+  ): ActivateOutput
+}
+
+type Mutation {
+  create_order (
+    cart: String!
+    price: String!
+    customer: String!
+  ): CreateOrderOutput
+}
+
+type Query {
+  login_partner (
+    email: String!
+    password: String!
+  ): LoginOutput
+}
+
+type Mutation {
+  register_user (
+    full_name: String!
+    email: String!
+    phone_number: String
+  ): RegisterUserOutput
+}
+
+type RegisterUserOutput {
+  ok : Boolean!
+}
+
+type ActivateOutput {
+  ok : Boolean!
+}
+
+type LoginOutput {
+  token : String!
+}
+
+type CreateProductOutput {
+  id : Int!
+}
+
+type CreateOrderOutput {
+  code : String!
+}
+

@@ -1,0 +1,958 @@
+- table:
+    schema: public
+    name: attributes
+  object_relationships:
+  - name: store
+    using:
+      foreign_key_constraint_on: store_id
+  - name: type
+    using:
+      foreign_key_constraint_on: type_id
+  array_relationships:
+  - name: product_attributes
+    using:
+      foreign_key_constraint_on:
+        column: attribute_id
+        table:
+          schema: public
+          name: product_attribute
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      columns:
+      - id
+      - name
+      - store_id
+      - type_id
+      - created_at
+      - order_no
+      backend_only: false
+  select_permissions:
+  - role: guest
+    permission:
+      columns:
+      - id
+      - name
+      - store_id
+      - type_id
+      - created_at
+      - order_no
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - id
+      - order_no
+      - store_id
+      - type_id
+      - name
+      - created_at
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      allow_aggregations: true
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - order_no
+      - store_id
+      - type_id
+      - name
+      - created_at
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      check:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: categories
+  object_relationships:
+  - name: category
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: categories
+        insertion_order: null
+        column_mapping:
+          parent_id: id
+  - name: store
+    using:
+      foreign_key_constraint_on: store_id
+  array_relationships:
+  - name: children
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: categories
+        insertion_order: null
+        column_mapping:
+          id: parent_id
+  - name: products
+    using:
+      foreign_key_constraint_on:
+        column: category_id
+        table:
+          schema: public
+          name: products
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        store:
+          user:
+            id:
+              _eq: X-Hasura-User-Id
+      columns:
+      - is_active
+      - id
+      - order_no
+      - parent_id
+      - store_id
+      - name
+      - slug
+      - created_at
+      backend_only: false
+  select_permissions:
+  - role: guest
+    permission:
+      columns:
+      - id
+      - name
+      - slug
+      - order_no
+      - store_id
+      - created_at
+      - is_active
+      - parent_id
+      filter: {}
+      allow_aggregations: true
+  - role: user
+    permission:
+      columns:
+      - id
+      - name
+      - slug
+      - order_no
+      - store_id
+      - created_at
+      - is_active
+      - parent_id
+      filter:
+        store:
+          user:
+            id:
+              _eq: X-Hasura-User-Id
+      allow_aggregations: true
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - is_active
+      - id
+      - order_no
+      - parent_id
+      - store_id
+      - name
+      - slug
+      - created_at
+      filter:
+        store:
+          user:
+            id:
+              _eq: X-Hasura-User-Id
+      check:
+        store:
+          user:
+            id:
+              _eq: X-Hasura-User-Id
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        store:
+          user:
+            id:
+              _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: images
+  object_relationships:
+  - name: product
+    using:
+      foreign_key_constraint_on: product_id
+  - name: store
+    using:
+      foreign_key_constraint_on: store_id
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      columns:
+      - id
+      - product_id
+      - store_id
+      - path
+      - created_at
+      backend_only: false
+  select_permissions:
+  - role: guest
+    permission:
+      columns:
+      - id
+      - store_id
+      - path
+      - created_at
+      - product_id
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - id
+      - product_id
+      - store_id
+      - path
+      - created_at
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      allow_aggregations: true
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - product_id
+      - store_id
+      - path
+      - created_at
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      check:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: order_products
+  object_relationships:
+  - name: order
+    using:
+      foreign_key_constraint_on: order_id
+  - name: product
+    using:
+      foreign_key_constraint_on: product_id
+  - name: store
+    using:
+      foreign_key_constraint_on: store_id
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      columns:
+      - id
+      - order_id
+      - store_id
+      - product_id
+      - quantity
+      - unit_price
+      - sub_total
+      - created_at
+      - updated_at
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - sub_total
+      - unit_price
+      - id
+      - order_id
+      - product_id
+      - quantity
+      - store_id
+      - created_at
+      - updated_at
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      allow_aggregations: true
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - sub_total
+      - unit_price
+      - id
+      - order_id
+      - product_id
+      - quantity
+      - store_id
+      - created_at
+      - updated_at
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      check:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: order_status
+  is_enum: true
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - value
+      - name
+      filter: {}
+- table:
+    schema: public
+    name: orders
+  object_relationships:
+  - name: _status
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: order_status
+        insertion_order: null
+        column_mapping:
+          status: value
+  - name: store
+    using:
+      foreign_key_constraint_on: store_id
+  array_relationships:
+  - name: order_products
+    using:
+      foreign_key_constraint_on:
+        column: order_id
+        table:
+          schema: public
+          name: order_products
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      columns:
+      - id
+      - store_id
+      - shipping_full_name
+      - shipping_phone_number
+      - shipping_address
+      - shipping_email
+      - note
+      - is_paid
+      - status
+      - code
+      - created_at
+      - updated_at
+      - total_price
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - is_paid
+      - total_price
+      - id
+      - store_id
+      - code
+      - note
+      - shipping_address
+      - shipping_email
+      - shipping_full_name
+      - shipping_phone_number
+      - status
+      - created_at
+      - updated_at
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      allow_aggregations: true
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - is_paid
+      - total_price
+      - id
+      - store_id
+      - code
+      - note
+      - shipping_address
+      - shipping_email
+      - shipping_full_name
+      - shipping_phone_number
+      - status
+      - created_at
+      - updated_at
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      check:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: product_attribute
+  object_relationships:
+  - name: attribute
+    using:
+      foreign_key_constraint_on: attribute_id
+  - name: product
+    using:
+      foreign_key_constraint_on: product_id
+  - name: store
+    using:
+      foreign_key_constraint_on: store_id
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      columns:
+      - id
+      - product_id
+      - attribute_id
+      - value
+      - store_id
+      - created_at
+      backend_only: false
+  select_permissions:
+  - role: guest
+    permission:
+      columns:
+      - id
+      - product_id
+      - attribute_id
+      - value
+      - store_id
+      - created_at
+      filter: {}
+  - role: user
+    permission:
+      columns:
+      - attribute_id
+      - id
+      - product_id
+      - store_id
+      - value
+      - created_at
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      allow_aggregations: true
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - attribute_id
+      - id
+      - product_id
+      - store_id
+      - value
+      - created_at
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      check:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: products
+  object_relationships:
+  - name: category
+    using:
+      foreign_key_constraint_on: category_id
+  - name: store
+    using:
+      foreign_key_constraint_on: store_id
+  - name: type
+    using:
+      foreign_key_constraint_on: type_id
+  array_relationships:
+  - name: images
+    using:
+      foreign_key_constraint_on:
+        column: product_id
+        table:
+          schema: public
+          name: images
+  - name: order_products
+    using:
+      foreign_key_constraint_on:
+        column: product_id
+        table:
+          schema: public
+          name: order_products
+  - name: product_attributes
+    using:
+      foreign_key_constraint_on:
+        column: product_id
+        table:
+          schema: public
+          name: product_attribute
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      columns:
+      - in_stock
+      - is_active
+      - price
+      - category_id
+      - id
+      - order_confirmed
+      - order_no
+      - store_id
+      - type_id
+      - options
+      - description
+      - name
+      - sku
+      - slug
+      backend_only: false
+  select_permissions:
+  - role: guest
+    permission:
+      columns:
+      - id
+      - name
+      - store_id
+      - options
+      - sku
+      - description
+      - slug
+      - is_active
+      - in_stock
+      - category_id
+      - price
+      - type_id
+      - order_no
+      - order_confirmed
+      filter: {}
+      limit: 12
+      allow_aggregations: true
+  - role: user
+    permission:
+      columns:
+      - in_stock
+      - is_active
+      - price
+      - category_id
+      - id
+      - order_confirmed
+      - order_no
+      - store_id
+      - type_id
+      - options
+      - description
+      - name
+      - sku
+      - slug
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      allow_aggregations: true
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - in_stock
+      - is_active
+      - price
+      - category_id
+      - id
+      - order_confirmed
+      - order_no
+      - store_id
+      - type_id
+      - options
+      - description
+      - name
+      - sku
+      - slug
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      check:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: stores
+  object_relationships:
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
+  array_relationships:
+  - name: attributes
+    using:
+      foreign_key_constraint_on:
+        column: store_id
+        table:
+          schema: public
+          name: attributes
+  - name: categories
+    using:
+      foreign_key_constraint_on:
+        column: store_id
+        table:
+          schema: public
+          name: categories
+  - name: images
+    using:
+      foreign_key_constraint_on:
+        column: store_id
+        table:
+          schema: public
+          name: images
+  - name: order_products
+    using:
+      foreign_key_constraint_on:
+        column: store_id
+        table:
+          schema: public
+          name: order_products
+  - name: orders
+    using:
+      foreign_key_constraint_on:
+        column: store_id
+        table:
+          schema: public
+          name: orders
+  - name: product_attributes
+    using:
+      foreign_key_constraint_on:
+        column: store_id
+        table:
+          schema: public
+          name: product_attribute
+  - name: products
+    using:
+      foreign_key_constraint_on:
+        column: store_id
+        table:
+          schema: public
+          name: products
+  - name: types
+    using:
+      foreign_key_constraint_on:
+        column: store_id
+        table:
+          schema: public
+          name: types
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+      columns:
+      - id
+      - domain
+      - screen_name
+      - name
+      - description
+      - color_scheme
+      - email
+      - phone_number
+      - address
+      - is_activated
+      - created_at
+      - updated_at
+      - is_blocked
+      - user_id
+      backend_only: false
+  select_permissions:
+  - role: guest
+    permission:
+      columns:
+      - id
+      - domain
+      - screen_name
+      - name
+      - description
+      - color_scheme
+      - email
+      - phone_number
+      - address
+      - is_activated
+      - created_at
+      - updated_at
+      - is_blocked
+      - user_id
+      filter: {}
+      limit: 1
+  - role: user
+    permission:
+      columns:
+      - is_activated
+      - is_blocked
+      - id
+      - user_id
+      - address
+      - color_scheme
+      - description
+      - domain
+      - email
+      - name
+      - phone_number
+      - screen_name
+      - created_at
+      - updated_at
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      allow_aggregations: true
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - is_activated
+      - is_blocked
+      - id
+      - user_id
+      - address
+      - color_scheme
+      - description
+      - domain
+      - email
+      - name
+      - phone_number
+      - screen_name
+      - created_at
+      - updated_at
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+      check:
+        user_id:
+          _eq: X-Hasura-User-Id
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        user_id:
+          _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: types
+  object_relationships:
+  - name: store
+    using:
+      foreign_key_constraint_on: store_id
+  array_relationships:
+  - name: attributes
+    using:
+      foreign_key_constraint_on:
+        column: type_id
+        table:
+          schema: public
+          name: attributes
+  - name: products
+    using:
+      foreign_key_constraint_on:
+        column: type_id
+        table:
+          schema: public
+          name: products
+  insert_permissions:
+  - role: user
+    permission:
+      check:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      columns:
+      - id
+      - store_id
+      - name
+      - created_at
+      backend_only: false
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - store_id
+      - name
+      - created_at
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      allow_aggregations: true
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - id
+      - store_id
+      - name
+      - created_at
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+      check:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+  delete_permissions:
+  - role: user
+    permission:
+      filter:
+        store:
+          user_id:
+            _eq: X-Hasura-User-Id
+- table:
+    schema: public
+    name: users
+  object_relationships:
+  - name: store
+    using:
+      manual_configuration:
+        remote_table:
+          schema: public
+          name: stores
+        insertion_order: null
+        column_mapping:
+          id: user_id
+  select_permissions:
+  - role: user
+    permission:
+      columns:
+      - is_activated
+      - is_blocked
+      - is_super
+      - birthday
+      - gender
+      - id
+      - ip_address
+      - oauth_partner
+      - activated_code
+      - address
+      - email
+      - full_name
+      - oauth_uid
+      - password
+      - phone_number
+      - created_at
+      - updated_at
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+  update_permissions:
+  - role: user
+    permission:
+      columns:
+      - is_activated
+      - is_blocked
+      - is_super
+      - birthday
+      - gender
+      - id
+      - ip_address
+      - oauth_partner
+      - activated_code
+      - address
+      - email
+      - full_name
+      - oauth_uid
+      - password
+      - phone_number
+      - created_at
+      - updated_at
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+      check:
+        id:
+          _eq: X-Hasura-User-Id

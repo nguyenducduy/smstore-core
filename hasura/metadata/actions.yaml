@@ -1,0 +1,37 @@
+actions:
+- name: activate
+  definition:
+    kind: synchronous
+    handler: http://192.168.10.10:5000/user/activate
+  permissions:
+  - role: guest
+- name: create_order
+  definition:
+    kind: synchronous
+    handler: http://192.168.10.10:5000/order/create
+    forward_client_headers: true
+  permissions:
+  - role: guest
+- name: login_partner
+  definition:
+    kind: ""
+    handler: http://192.168.10.10:5000/user/login_partner
+  permissions:
+  - role: guest
+- name: register_user
+  definition:
+    kind: synchronous
+    handler: http://192.168.10.10:5000/user/register
+    forward_client_headers: true
+  permissions:
+  - role: guest
+custom_types:
+  enums: []
+  input_objects: []
+  objects:
+  - name: RegisterUserOutput
+  - name: ActivateOutput
+  - name: LoginOutput
+  - name: CreateProductOutput
+  - name: CreateOrderOutput
+  scalars: []

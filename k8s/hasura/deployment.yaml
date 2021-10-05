@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: smstore-core
+  name: smstore-core
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: smstore-core
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: smstore-core
+    spec:
+      containers:
+      - image: hasura/graphql-engine:v2.0.6
+        imagePullPolicy: IfNotPresent
+        name: hasura
+        env:
+        - name: HASURA_GRAPHQL_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: smstore-db-url
+              key: value
+        - name: HASURA_GRAPHQL_ADMIN_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: smstore-hasura-admin-secret
+              key: password
+        - name: HASURA_GRAPHQL_JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: smstore-hasura-jwt-secret
+              key: value
+        - name: HASURA_GRAPHQL_ENABLE_CONSOLE
+          value: "true"
+        - name: HASURA_GRAPHQL_DEV_MODE
+          value: "false"
+        - name: HASURA_GRAPHQL_UNAUTHORIZED_ROLE
+          value: "guest"
+        - name: HASURA_GRAPHQL_CORS_DOMAIN
+          value: "*"
+        - name: HASURA_GRAPHQL_ENABLE_TELEMETRY
+          value: "false"
+        - name: HASURA_GRAPHQL_ENABLED_LOG_TYPES
+          value: "http-log"
+        - name: TRIGGER_USER_AGENT
+          value: "hasura-graphql-engine/v2.0.6"
+        - name: ACTION_BASE_URL
+          value: "http://smstore-actions"
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources: {}
